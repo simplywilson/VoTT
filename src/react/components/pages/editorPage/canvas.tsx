@@ -49,9 +49,9 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
 
         // @ts-ignore
         this.editor = new ct.Editor(sz);
-        this.editor.addToolbar(tz, ct.Editor.FullToolbarSet, "../../../images/icons/");
+        this.editor.addToolbar(tz, ct.Editor.FullToolbarSet, "./../../../images/icons/");
 
-        //Expose CanvasTools RegionMaager API
+        //Expose CanvasTools RegionManager API
         this.addPointRegion = this.editor.RM.addPointRegion.bind(this.editor.RM);
         this.addPolylineRegion = this.editor.RM.addPolylineRegion.bind(this.editor.RM);
         this.addRectRegion = this.editor.RM.addRectRegion.bind(this.editor.RM);
@@ -79,10 +79,6 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
         let ternaryTag = new ct.Core.Tag(
             (Math.random() > 0.5) ? "one" : "two",
             Math.floor(Math.random() * 360.0));
-
-        if(this.props.selectedAsset.regions.length){
-            //draw the regions
-        }
 
         this.editor.onSelectionEnd = (commit) => {
             let r = commit.boundRect;
@@ -119,11 +115,14 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
         
         this.editor.onRegionMove = (id, x, y, width, height) => {
             console.log(`Moved ${id}: {${x}, ${y}} x {${width}, ${height}}`);
-            let movedRegionIndex = this.props.selectedAsset.regions.findIndex(region => {return region.id == id})
-            let movedRegion = this.props.selectedAsset.regions[movedRegionIndex]
+            let currentAssetMetadata = this.props.selectedAsset;
+            let movedRegionIndex = currentAssetMetadata.regions.findIndex(region => {return region.id == id})
+            let movedRegion = currentAssetMetadata.regions[movedRegionIndex]
             if(movedRegion){
                 movedRegion.points = [new ct.Core.Point2D(x, y), new ct.Core.Point2D(x + width, y + height)]
             }
+            currentAssetMetadata.regions[movedRegionIndex] = movedRegion;
+            this.props.onAssetMetadataChanged(currentAssetMetadata);
         }
 
         this.editor.onRegionDelete = (id) => {
@@ -176,5 +175,6 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
                 this.addRectRegion(region.id, region.points[0], region.points[1], region.tags);
             });
         }
+        this.redrawAllRegions();
     }
 }
