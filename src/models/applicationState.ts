@@ -36,9 +36,7 @@ export interface IAppSettings {
  * @member name - User defined name
  * @member description - User defined description
  * @member tags - User defined list of tags
- * @member sourceConnectionId - Reference ID for the source connection
  * @member sourceConnection - Full source connection details
- * @member targetConnectionId - Reference ID for the target connection
  * @member targetConnection - Full target connection details
  * @member exportFormat - Full export format definition
  * @member assets - Map of assets within a project
@@ -49,9 +47,7 @@ export interface IProject {
     name: string;
     description?: string;
     tags: ITag[];
-    sourceConnectionId?: string;
     sourceConnection: IConnection;
-    targetConnectionId?: string;
     targetConnection: IConnection;
     exportFormat: IExportFormat;
     autoSave: boolean;

@@ -56,15 +56,8 @@ export default class ProjectSettingsPage extends React.Component<IProjectSetting
     }
 
     private onFormSubmit = async (formData) => {
-        if (formData.tags !== undefined) {
-            formData.tags = JSON.parse(formData.tags);
-        }
         const projectToUpdate: IProject = {
             ...formData,
-            sourceConnection: this.props.connections
-                .find((connection) => connection.id === formData.sourceConnectionId),
-            targetConnection: this.props.connections
-                .find((connection) => connection.id === formData.targetConnectionId),
         };
 
         await this.props.actions.saveProject(projectToUpdate);
