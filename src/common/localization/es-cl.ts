@@ -10,6 +10,7 @@ export const spanish: IAppStrings = {
         description: "Descripción",
         submit: "Enviar",
         cancel: "Cancelar",
+        save: "Guardar",
         provider: "Proveedor",
         homePage: "Página de Inicio",
     },

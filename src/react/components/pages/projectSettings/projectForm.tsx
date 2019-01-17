@@ -5,8 +5,9 @@ import { IConnection, IProject } from "../../../../models/applicationState";
 import ConnectionPicker from "../../common/connectionPicker/connectionPicker";
 import CustomField from "../../common/customField/customField";
 import CustomFieldTemplate from "../../common/customField/customFieldTemplate";
-import TagsInput from "../../common/tagsInput/tagsInput";
+import { TagsInput, ITagsInputProps, TagEditorModal } from "vott-react";
 import { StorageProviderFactory } from "../../../../providers/storage/storageProviderFactory";
+import { ITag } from "vott-react/dist/models/models";
 // tslint:disable-next-line:no-var-requires
 const formSchema = addLocValues(require("./projectForm.json"));
 // tslint:disable-next-line:no-var-requires
@@ -45,6 +46,9 @@ export interface IProjectFormState {
  * @description - Form for editing or creating VoTT projects
  */
 export default class ProjectForm extends React.Component<IProjectFormProps, IProjectFormState> {
+    
+    private tagEditorModal: React.RefObject<TagEditorModal>;
+    
     private fields = {
         sourceConnection: CustomField(ConnectionPicker, (props) => {
             return {
@@ -65,10 +69,13 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
             };
         }),
         tagsInput: CustomField(TagsInput, (props) => {
-            return {
+            const tagsInputProps : ITagsInputProps = {
                 tags: props.formData,
                 onChange: props.onChange,
-            };
+                placeHolder: strings.tags.placeholder,
+                onCtrlTagClick: this.onTagClick,
+            }
+            return tagsInputProps;
         }),
     };
 
@@ -82,6 +89,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                 ...this.props.project,
             },
         };
+        this.tagEditorModal = React.createRef<TagEditorModal>();
 
         // Set the default video settings if they are not already set
         if (this.props.project) {
@@ -95,6 +103,8 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onFormCancel = this.onFormCancel.bind(this);
         this.onFormValidate = this.onFormValidate.bind(this);
+        this.onTagClick = this.onTagClick.bind(this);
+        this.onTagModalOk = this.onTagModalOk.bind(this);
     }
     /**
      * Updates state if project from properties has changed
@@ -106,6 +116,14 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                 formData: { ...this.props.project },
             });
         }
+    }
+
+    private onTagClick(tag: ITag) {
+        this.tagEditorModal.current.open(tag);
+    }
+
+    private onTagModalOk(tag: ITag) {
+        this.tagEditorModal.current.close();
     }
 
     public render() {
@@ -128,6 +146,15 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                         type="button"
                         onClick={this.onFormCancel}>{strings.common.cancel}</button>
                 </div>
+                <TagEditorModal
+                    ref={this.tagEditorModal}
+                    onOk={this.onTagModalOk}
+
+                    tagNameText={strings.tags.modal.name}
+                    tagColorText={strings.tags.modal.color}
+                    saveText={strings.common.save}
+                    cancelText={strings.common.cancel}                    
+                />
             </Form>
         );
     }
