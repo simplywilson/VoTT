@@ -47,42 +47,9 @@ export interface IProjectFormState {
  * @description - Form for editing or creating VoTT projects
  */
 export default class ProjectForm extends React.Component<IProjectFormProps, IProjectFormState> {
-    
+
     private tagsInput: React.RefObject<TagsInput>;
     private tagEditorModal: React.RefObject<TagEditorModal>;
-    
-    private fields() {
-        return {
-            sourceConnection: CustomField(ConnectionPicker, (props) => {
-                return {
-                    id: props.idSchema.$id,
-                    value: props.formData,
-                    connections: this.props.connections,
-                    onChange: props.onChange,
-                };
-            }),
-            targetConnection: CustomField(ConnectionPicker, (props) => {
-                const targetConnections = this.props.connections.filter(
-                    (connection) => StorageProviderFactory.isRegistered(connection.providerType));
-                return {
-                    id: props.idSchema.$id,
-                    value: props.formData,
-                    connections: targetConnections,
-                    onChange: props.onChange,
-                };
-            }),
-            tagsInput: CustomField(TagsInput, (props) => {
-                const tagsInputProps : ITagsInputProps = {
-                    tags: this.state.tags,
-                    onChange: this.onTagsChange,
-                    placeHolder: strings.tags.placeholder,
-                    onCtrlTagClick: this.onTagClick,
-                    ref: this.tagsInput
-                }
-                return tagsInputProps;
-            }),
-        };
-    } 
 
     constructor(props, context) {
         super(props, context);
@@ -94,7 +61,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                 ...this.props.project,
             },
             tags: (this.props.project) ? this.props.project.tags : [],
-            selectedTag: null
+            selectedTag: null,
         };
         this.tagsInput = React.createRef<TagsInput>();
         this.tagEditorModal = React.createRef<TagEditorModal>();
@@ -128,29 +95,6 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
         }
     }
 
-    private onTagsChange(tags: ITag[]) {
-        this.setState({tags});
-    }
-
-    private onTagClick(tag: ITag) {
-        this.setState({
-            selectedTag: tag
-        }, () => {
-            this.tagEditorModal.current.open(tag);
-        });
-    }
-
-    private onTagModalOk(oldTag: ITag, newTag: ITag) {
-        this.tagsInput.current.updateTag(oldTag, newTag);
-        this.tagEditorModal.current.close();
-    }
-
-    private onTagModalCancel() {
-        this.setState({
-            selectedTag: null
-        });
-    }
-
     public render() {
         return (
             <Form
@@ -179,10 +123,66 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                     tagNameText={strings.tags.modal.name}
                     tagColorText={strings.tags.modal.color}
                     saveText={strings.common.save}
-                    cancelText={strings.common.cancel}                    
+                    cancelText={strings.common.cancel}
                 />
             </Form>
         );
+    }
+
+    private fields() {
+        return {
+            sourceConnection: CustomField(ConnectionPicker, (props) => {
+                return {
+                    id: props.idSchema.$id,
+                    value: props.formData,
+                    connections: this.props.connections,
+                    onChange: props.onChange,
+                };
+            }),
+            targetConnection: CustomField(ConnectionPicker, (props) => {
+                const targetConnections = this.props.connections.filter(
+                    (connection) => StorageProviderFactory.isRegistered(connection.providerType));
+                return {
+                    id: props.idSchema.$id,
+                    value: props.formData,
+                    connections: targetConnections,
+                    onChange: props.onChange,
+                };
+            }),
+            tagsInput: CustomField(TagsInput, (props) => {
+                const tagsInputProps: ITagsInputProps = {
+                    tags: this.state.tags,
+                    onChange: this.onTagsChange,
+                    placeHolder: strings.tags.placeholder,
+                    onCtrlTagClick: this.onTagClick,
+                    ref: this.tagsInput,
+                };
+                return tagsInputProps;
+            }),
+        };
+    }
+
+    private onTagsChange(tags: ITag[]) {
+        this.setState({tags});
+    }
+
+    private onTagClick(tag: ITag) {
+        this.setState({
+            selectedTag: tag,
+        }, () => {
+            this.tagEditorModal.current.open(tag);
+        });
+    }
+
+    private onTagModalOk(oldTag: ITag, newTag: ITag) {
+        this.tagsInput.current.updateTag(oldTag, newTag);
+        this.tagEditorModal.current.close();
+    }
+
+    private onTagModalCancel() {
+        this.setState({
+            selectedTag: null,
+        });
     }
 
     private onFormValidate(project: IProject, errors: FormValidation) {
@@ -206,7 +206,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
     private onFormSubmit(args: ISubmitEvent<IProject>) {
         const project: IProject = {
             ...args.formData,
-            tags: this.state.tags
+            tags: this.state.tags,
         };
         this.props.onSubmit(project);
     }
