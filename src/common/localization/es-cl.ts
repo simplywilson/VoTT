@@ -11,6 +11,7 @@ export const spanish: IAppStrings = {
         submit: "Enviar",
         cancel: "Cancelar",
         save: "Guardar",
+        delete: "Eliminar",
         provider: "Proveedor",
         homePage: "Página de Inicio",
     },
@@ -28,11 +29,29 @@ export const spanish: IAppStrings = {
             title: "Borrar Proyecto",
             confirmation: "¿Está seguro que quiere borrar el proyecto",
         },
+        loadProjectError: {
+            title: "Proyecto de carga tiene un error",
+            message: "El archivo no es válido json",
+        },
     },
     appSettings: {
         title: "Configuración de Aplicación",
         storageTitle: "Configuración de Almacenamiento",
         uiHelp: "Donde se guardan sus configuraciones",
+        save: "Guardar configuración",
+        securityToken: {
+            name: {
+                title: "Nombre",
+            },
+            key: {
+                title: "Clave",
+            },
+        },
+        securityTokens: {
+            title: "Tokens de seguridad",
+            // tslint:disable-next-line:max-line-length
+            description: "Los tokens de seguridad se utilizan para cifrar datos confidenciales dentro de la configuración del proyecto",
+        },
         devTools: {
             description: "Abrir herramientas de desarrollo de aplicaciones para ayudar a diagnosticar problemas.",
             button: "Alternar Herramientas de Desarrollo",

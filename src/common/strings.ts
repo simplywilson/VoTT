@@ -14,6 +14,7 @@ export interface IAppStrings {
         submit: string;
         cancel: string;
         save: string;
+        delete: string;
         provider: string;
         homePage: string;
     };
@@ -31,11 +32,28 @@ export interface IAppStrings {
             confirmation: string;
         }
         recentProjects: string;
+        loadProjectError: {
+            title: string;
+            message: string;
+        }
     };
     appSettings: {
         title: string;
         storageTitle: string;
         uiHelp: string;
+        save: string;
+        securityToken: {
+            name: {
+                title: string;
+            },
+            key: {
+                title: string;
+            },
+        },
+        securityTokens: {
+            title: string;
+            description: string;
+        },
         devTools: {
             description: string;
             button: string;

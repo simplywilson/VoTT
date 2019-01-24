@@ -10,7 +10,11 @@ export const english: IAppStrings = {
         description: "Description",
         submit: "Submit",
         cancel: "Cancel",
+<<<<<<< HEAD
         save: "Save",
+=======
+        delete: "Delete",
+>>>>>>> b8b1176a299735b2435698d98da96c6ee72707b6
         provider: "Provider",
         homePage: "Home Page",
     },
@@ -28,11 +32,28 @@ export const english: IAppStrings = {
             title: "Delete Project",
             confirmation: "Are you sure you want to delete project",
         },
+        loadProjectError: {
+            title: "Project Loading has an error",
+            message: "File is not valid json",
+        },
     },
     appSettings: {
         title: "Application Settings",
         storageTitle: "Storage Settings",
         uiHelp: "Where your settings are stored",
+        save: "Save Settings",
+        securityToken: {
+            name: {
+                title: "Name",
+            },
+            key: {
+                title: "Key",
+            },
+        },
+        securityTokens: {
+            title: "Security Tokens",
+            description: "Security tokens are used to encrypt sensitive data within your project configuration",
+        },
         devTools: {
             description: "Open application developer tools to help diagnose issues",
             button: "Toggle Developer Tools",
