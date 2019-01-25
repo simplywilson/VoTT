@@ -6,6 +6,8 @@ import IProjectActions, * as projectActions from "../../../../redux/actions/proj
 import ExportForm from "./exportForm";
 import { IProject, IApplicationState, IExportFormat } from "../../../../models/applicationState";
 import { strings } from "../../../../common/strings";
+import { ExportAssetState } from "../../../../providers/export/exportProvider";
+import { toast } from "react-toastify";
 
 /**
  * Properties for Export Page
@@ -40,7 +42,9 @@ function mapDispatchToProps(dispatch) {
 export default class ExportPage extends React.Component<IExportPageProps> {
     private emptyExportFormat: IExportFormat = {
         providerType: "",
-        providerOptions: {},
+        providerOptions: {
+            assetState: ExportAssetState.All,
+        },
     };
 
     constructor(props, context) {
@@ -57,7 +61,9 @@ export default class ExportPage extends React.Component<IExportPageProps> {
     }
 
     public render() {
-        const exportFormat = this.props.project ? this.props.project.exportFormat : { ...this.emptyExportFormat };
+        const exportFormat = this.props.project && this.props.project.exportFormat
+            ? this.props.project.exportFormat
+            : { ...this.emptyExportFormat };
 
         return (
             <div className="m-3 text-light">
@@ -84,6 +90,7 @@ export default class ExportPage extends React.Component<IExportPageProps> {
         };
 
         await this.props.actions.saveProject(projectToUpdate);
+        toast.success(strings.export.messages.saveSuccess);
         this.props.history.goBack();
     }
 

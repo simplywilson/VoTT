@@ -3,11 +3,13 @@ import Form, { FormValidation, ISubmitEvent } from "react-jsonschema-form";
 import { ITagsInputProps, TagEditorModal, TagsInput } from "vott-react";
 import "vott-react/build/lib/components/TagsInput/tagsInput.css";
 import { addLocValues, strings } from "../../../../common/strings";
-import { IConnection, IProject, ITag } from "../../../../models/applicationState";
+import { IAppSettings, IConnection, IProject, ITag } from "../../../../models/applicationState";
 import { StorageProviderFactory } from "../../../../providers/storage/storageProviderFactory";
 import ConnectionPicker from "../../common/connectionPicker/connectionPicker";
+import { IConnectionProviderPickerProps } from "../../common/connectionProviderPicker/connectionProviderPicker";
 import CustomField from "../../common/customField/customField";
 import CustomFieldTemplate from "../../common/customField/customFieldTemplate";
+import { ISecurityTokenPickerProps, SecurityTokenPicker } from "../../common/securityTokenPicker/securityTokenPicker";
 // tslint:disable-next-line:no-var-requires
 const formSchema = addLocValues(require("./projectForm.json"));
 // tslint:disable-next-line:no-var-requires
@@ -23,6 +25,7 @@ const uiSchema = addLocValues(require("./projectForm.ui.json"));
 export interface IProjectFormProps extends React.Props<ProjectForm> {
     project: IProject;
     connections: IConnection[];
+    appSettings: IAppSettings;
     onSubmit: (project: IProject) => void;
     onCancel?: () => void;
 }
@@ -118,15 +121,20 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
 
     private fields() {
         return {
-            sourceConnection: CustomField(ConnectionPicker, (props) => {
-                return {
-                    id: props.idSchema.$id,
-                    value: props.formData,
-                    connections: this.props.connections,
-                    onChange: props.onChange,
-                };
-            }),
-            targetConnection: CustomField(ConnectionPicker, (props) => {
+            securityToken: CustomField<ISecurityTokenPickerProps>(SecurityTokenPicker, (props) => ({
+                id: props.idSchema.$id,
+                schema: props.schema,
+                value: props.formData,
+                securityTokens: this.props.appSettings.securityTokens,
+                onChange: props.onChange,
+            })),
+            sourceConnection: CustomField<IConnectionProviderPickerProps>(ConnectionPicker, (props) => ({
+                id: props.idSchema.$id,
+                value: props.formData,
+                connections: this.props.connections,
+                onChange: props.onChange,
+            })),
+            targetConnection: CustomField<IConnectionProviderPickerProps>(ConnectionPicker, (props) => {
                 const targetConnections = this.props.connections.filter(
                     (connection) => StorageProviderFactory.isRegistered(connection.providerType));
                 return {
