@@ -1,5 +1,5 @@
 import { ITag } from "../../../../models/applicationState";
-import TagsInput, { ITagsInputProps, IReactTag, ITagsInputState } from "../../common/tagsInput/tagsInput";
+import TagsInput, { ITagsInputProps, IReactTag, ITagsInputState } from "vott-react";
 import React from "react";
 
 /**
