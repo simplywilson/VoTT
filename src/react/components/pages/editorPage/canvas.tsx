@@ -15,6 +15,7 @@ import { TagsDescriptor } from "vott-ct/lib/js/CanvasTools/Core/TagsDescriptor";
 import { Point2D } from "vott-ct/lib/js/CanvasTools/Core/Point2D";
 import { Tag } from "vott-ct/lib/js/CanvasTools/Core/Tag";
 import { strings } from "../../../../common/strings";
+import { ErrorHandler, IErrorHandlerProps } from "../../../../react/components/common/errorHandler/errorHandler";
 
 export interface ICanvasProps {
     selectedAsset: IAssetMetadata;
