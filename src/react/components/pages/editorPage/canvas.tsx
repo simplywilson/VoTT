@@ -276,8 +276,9 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
                 <div id="selection-zone" className={`asset-${this.getAssetType()}`}>
                     <div id="editor-zone" className="full-size" />
                 </div>
-            </div>
-        );
+            }
+            </React.Fragment>
+            );
     }
 
     /**
