@@ -50,7 +50,6 @@ describe("Editor Page Component", () => {
             const assetMetadata: IAssetMetadata = {
                 asset: { ...asset },
                 regions: [],
-                timestamp: null,
             };
             return Promise.resolve(assetMetadata);
         });
