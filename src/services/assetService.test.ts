@@ -67,7 +67,6 @@ describe("Asset Service", () => {
                     const assetMetadata: IAssetMetadata = {
                         asset: testAssets[0],
                         regions: [],
-                        timestamp: null,
                     };
 
                     return JSON.stringify(assetMetadata, null, 4);
@@ -109,7 +108,6 @@ describe("Asset Service", () => {
             const assetMetadata: IAssetMetadata = {
                 asset: testAssets[0],
                 regions: [],
-                timestamp: null,
             };
 
             const result = await assetService.save(assetMetadata);
@@ -139,7 +137,6 @@ describe("Asset Service", () => {
                     const assetMetadata: IAssetMetadata = {
                         asset: testAssets[0],
                         regions: [],
-                        timestamp: null,
                     };
 
                     return JSON.stringify(assetMetadata, null, 4);
