@@ -132,7 +132,6 @@ export default class MockFactory {
         return {
             asset,
             regions: [],
-            timestamp: null,
         };
     }
 

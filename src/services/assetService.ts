@@ -141,7 +141,6 @@ export class AssetService {
             return {
                 asset: { ...asset },
                 regions: [],
-                timestamp: null,
             };
         }
     }
