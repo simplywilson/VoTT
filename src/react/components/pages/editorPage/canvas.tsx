@@ -1,7 +1,7 @@
 import React from "react";
 import * as shortid from "shortid";
 import { IAssetMetadata, IRegion, RegionType, IAppError,
-        AssetState, EditorMode, IProject, AssetType, ErrorCode } from "../../../../models/applicationState";
+        AssetState, EditorMode, IProject, AssetType, ErrorCode, IAsset } from "../../../../models/applicationState";
 import { CanvasTools } from "vott-ct";
 import { Player, ControlBar, CurrentTimeDisplay, TimeDivider,
     BigPlayButton, PlaybackRateMenuButton, VolumeMenuButton } from "video-react";
@@ -18,6 +18,8 @@ export interface ICanvasProps {
     onAssetMetadataChanged: (assetMetadata: IAssetMetadata) => void;
     editorMode: EditorMode;
     project: IProject;
+    onVideoPaused: (timestamp: number) => void;
+    canvasAsset: IAssetMetadata;
 }
 
 interface ICanvasState {
@@ -241,7 +243,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
     }
 
     public componentDidUpdate(prevProps) {
-        if (this.props.selectedAsset.asset.path !== prevProps.selectedAsset.asset.path) {
+        if (this.props.canvasAsset.asset.path !== prevProps.canvasAsset.asset.path) {
             this.updateEditor();
             if (this.props.selectedAsset.regions.length) {
                 this.updateSelected([]);
@@ -301,7 +303,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
             },
             points: scaledRegionData.points,
         };
-        const currentAssetMetadata = this.props.selectedAsset;
+        const currentAssetMetadata = this.props.canvasAsset;
         currentAssetMetadata.regions.push(newRegion);
         this.updateSelected([newRegion]);
         if (currentAssetMetadata.regions.length) {
@@ -319,7 +321,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
      */
     public onRegionMoveEnd = (id: string, regionData: RegionData) => {
         const ct = CanvasTools;
-        const currentAssetMetadata = this.props.selectedAsset;
+        const currentAssetMetadata = this.props.canvasAsset;
         const movedRegionIndex = currentAssetMetadata.regions.findIndex((region) => region.id === id);
         const movedRegion = currentAssetMetadata.regions[movedRegionIndex];
         // @ts-ignore   in here until CanvasTools types get updated
@@ -340,8 +342,8 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
      */
     public onRegionDelete = (id: string) => {
         this.deleteRegionById(id);
-        const currentAssetMetadata = this.props.selectedAsset;
-        const deletedRegionIndex = this.props.selectedAsset.regions.findIndex((region) => region.id === id);
+        const currentAssetMetadata = this.props.canvasAsset;
+        const deletedRegionIndex = this.props.canvasAsset.regions.findIndex((region) => region.id === id);
         currentAssetMetadata.regions.splice(deletedRegionIndex, 1);
         if (!currentAssetMetadata.regions.length) {
             currentAssetMetadata.asset.state = AssetState.Visited;
@@ -361,10 +363,10 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
         let selectedRegions = this.state.selectedRegions;
         if (multiselect) {
             selectedRegions.push(
-                this.props.selectedAsset.regions.find((region) => region.id === id));
+                this.props.canvasAsset.regions.find((region) => region.id === id));
         } else {
             selectedRegions = [
-                this.props.selectedAsset.regions.find((region) => region.id === id)];
+                this.props.canvasAsset.regions.find((region) => region.id === id)];
         }
         this.updateSelected(selectedRegions);
     }
@@ -400,6 +402,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
                 // If the video is paused, add this frame to the editor content
                 if (state.paused && !state.waiting && state.hasStarted) {
                     // If we're paused, make sure we're behind the canvas so we can tag
+                    this.props.onVideoPaused(state.currentTime);
                     this.playerRef.current.manager.rootElement.style.zIndex = 0;
                     this.editor.addContentSource(this.playerRef.current.video.video);
                     this.updateRegions();
@@ -430,8 +433,8 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
     }
 
     private updateRegions() {
-        if (this.props.selectedAsset.regions.length) {
-            this.props.selectedAsset.regions.forEach((region: IRegion) => {
+        if (this.props.canvasAsset.regions.length) {
+            this.props.canvasAsset.regions.forEach((region: IRegion) => {
                 const loadedRegionData = new RegionData(region.boundingBox.left,
                                                         region.boundingBox.top,
                                                         region.boundingBox.width,
@@ -449,8 +452,8 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
                 }
                 if (this.state.selectedRegions) {
                     this.setState({
-                        selectedRegions: [this.props.selectedAsset.regions[
-                            this.props.selectedAsset.regions.length - 1]],
+                        selectedRegions: [this.props.canvasAsset.regions[
+                            this.props.canvasAsset.regions.length - 1]],
                     });
                 }
             });
