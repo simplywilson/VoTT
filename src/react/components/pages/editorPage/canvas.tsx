@@ -243,9 +243,10 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
     }
 
     public componentDidUpdate(prevProps) {
-        if (this.props.canvasAsset.asset.path !== prevProps.canvasAsset.asset.path) {
+        if (this.props.canvasAsset.asset.id !== prevProps.canvasAsset.asset.id) {
             this.updateEditor();
-            if (this.props.selectedAsset.regions.length) {
+            this.updateRegions();
+            if (this.props.canvasAsset.regions.length) {
                 this.updateSelected([]);
             }
         }
@@ -398,20 +399,19 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
         if (this.playerRef && this.playerRef.current && this.selectionRef && this.selectionRef.current) {
             // Update the selection div to remove 2.0em from the height (height of the control bar)
             this.selectionRef.current.style.height = "calc(100% - 2.0em)";
-            this.playerRef.current.subscribeToStateChange((state, prev) => {
+            this.playerRef.current.subscribeToStateChange(async (state, prev) => {
                 // If the video is paused, add this frame to the editor content
-                if (state.paused && !state.waiting && state.hasStarted) {
+                if (state.paused && prev.currentTime !== state.currentTime) {
                     // If we're paused, make sure we're behind the canvas so we can tag
                     this.props.onVideoPaused(state.currentTime);
                     this.playerRef.current.manager.rootElement.style.zIndex = 0;
-                    this.editor.addContentSource(this.playerRef.current.video.video);
-                    this.updateRegions();
-                } else if (!state.paused) {
+                    await this.editor.addContentSource(this.playerRef.current.video.video);
+                } else if (!state.paused && prev.paused) {
                     // We need to make sure we're on top if we are playing
                     this.playerRef.current.manager.rootElement.style.zIndex = 9001;
                 }
             });
-        } else {
+        } else  {
             // Something has gone majorly wrong to get to this spot
             throw new Error(strings.errors.unknown.message);
         }
@@ -429,7 +429,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
             this.editor.addContentSource(e.target);
             this.updateRegions();
         });
-        image.src = this.props.selectedAsset.asset.path;
+        image.src = this.props.canvasAsset.asset.path;
     }
 
     private updateRegions() {
