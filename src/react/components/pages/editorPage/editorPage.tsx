@@ -241,8 +241,9 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
     }
 
     private onToolbarItemSelected(toolbarItem: ToolbarItem) {
-        const playerRef = this.canvas.current.videoPlayer.current;
-        const playerSate = playerRef.getState().player;
+        const assetType = this.state.selectedAsset.asset.type;
+        const playerRef = ( assetType === AssetType.Video ) ? this.canvas.current.videoPlayer.current : null;
+        const playerSate = ( assetType === AssetType.Video ) ? playerRef.getState().player : null;
         let selectionMode: SelectionMode = null;
         let editorMode: EditorMode = null;
 
@@ -268,10 +269,18 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
                 editorMode = EditorMode.Select;
                 break;
             case "stepFwd":
-                playerRef.seek(playerSate.currentTime + 1);
+                if (assetType === AssetType.Video) {
+                    playerRef.seek(playerSate.currentTime + 1);
+                } else {
+                    console.log("next");
+                }
                 break;
             case "stepBwd":
-                playerRef.seek(playerSate.currentTime - 1);
+                if (assetType === AssetType.Video) {
+                    playerRef.seek(playerSate.currentTime - 1);
+                } else {
+                    console.log("prev");
+                }
                 break;
             default:
                 console.log(toolbarItem.props.name);
