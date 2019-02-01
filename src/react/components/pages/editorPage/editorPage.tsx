@@ -242,6 +242,8 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
 
     private onToolbarItemSelected(toolbarItem: ToolbarItem) {
         const setSelectionMode = this.canvas.current.setSelectionMode;
+        const playerRef = this.canvas.current.playerRef.current;
+        const playerSate = playerRef.getState().player;
         switch (toolbarItem.props.name) {
             case "drawRectangle":
                 setSelectionMode(SelectionMode.RECT);
@@ -262,6 +264,12 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
             case "panCanvas":
                 setSelectionMode(SelectionMode.NONE);
                 this.setEditorMode(EditorMode.Select);
+                break;
+            case "stepFwd":
+                playerRef.seek(playerSate.currentTime + 1);
+                break;
+            case "stepBwd":
+                playerRef.seek(playerSate.currentTime - 1);
                 break;
             default:
                 console.log(toolbarItem.props.name);
@@ -303,12 +311,12 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
 
         const canvasAssetMetadata = await this.props.actions.loadAssetMetadata(this.props.project, canvasAsset);
 
-        canvasAssetMetadata.asset.size = canvasAsset.size;
+        // canvasAssetMetadata.asset.size = canvasAsset.size;
 
         this.onAssetMetadataChanged(canvasAssetMetadata);
 
         // Get parent asset is it's a video frame
-        if (canvasAsset.type === AssetType.Videoframe) {
+        if (canvasAsset.type === AssetType.VideoFrame) {
             const parentAsset = this.state.assets.find((a) => canvasAsset.parent === a.id);
             assetMetadata = await this.props.actions.loadAssetMetadata(this.props.project, parentAsset);
         }

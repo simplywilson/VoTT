@@ -9,6 +9,8 @@ import { ZoomIn } from "./react/components/toolbar/zoomIn";
 import { ZoomOut } from "./react/components/toolbar/zoomOut";
 import { ToolbarItemType } from "./react/components/toolbar/toolbarItem";
 import { CopyRectangle } from "./react/components/toolbar/copyRectangle";
+import { StepBwd } from "./react/components/toolbar/stepBwd";
+import { StepFwd } from "./react/components/toolbar/stepFwd";
 
 /**
  * Registers items for toolbar
@@ -83,6 +85,22 @@ export default function registerToolbar() {
         tooltip: "Export Project",
         icon: "fa-external-link-square-alt",
         group: "project",
+        type: ToolbarItemType.Action,
+    });
+
+    ToolbarItemFactory.register(StepBwd, {
+        name: "stepBwd",
+        tooltip: "Step Bwd",
+        icon: "fa-step-backward",
+        group: "nav",
+        type: ToolbarItemType.Action,
+    });
+
+    ToolbarItemFactory.register(StepFwd, {
+        name: "stepFwd",
+        tooltip: "Step Fwd",
+        icon: "fa-step-forward",
+        group: "nav",
         type: ToolbarItemType.Action,
     });
 }
