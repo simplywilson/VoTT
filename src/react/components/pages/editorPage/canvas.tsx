@@ -191,7 +191,7 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
 
     public editor: Editor;
 
-    private videoPlayer: React.RefObject<Player>;
+    public videoPlayer: React.RefObject<Player>;
 
     constructor(props, context) {
         super(props, context);
@@ -433,15 +433,18 @@ export default class Canvas extends React.Component<ICanvasProps, ICanvasState> 
         // If the video is paused, add this frame to the editor content
         if (state.paused && (state.currentTime !== prev.currentTime || state.seeking !== prev.seeking)) {
             // If we're paused, make sure we're behind the canvas so we can tag
+            this.deleteAllRegions();
+            this.props.onVideoPaused(Math.floor(state.currentTime));
+            this.updateRegions();
             const video = this.videoPlayer.current.video.video as HTMLVideoElement;
             if (video.videoHeight > 0 && video.videoWidth > 0) {
                 await this.editor.addContentSource(this.videoPlayer.current.video.video);
             }
             this.setState({ canvasEnabled: true });
-            this.updateRegions();
             console.log(state);
         } else if (!state.paused && state.paused !== prev.paused) {
             // We need to make sure we're on top if we are playing
+            this.deleteAllRegions();
             this.setState({ canvasEnabled: false });
         }
     }

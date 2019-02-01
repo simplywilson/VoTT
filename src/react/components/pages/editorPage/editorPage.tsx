@@ -242,7 +242,7 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
 
     private onToolbarItemSelected(toolbarItem: ToolbarItem) {
         const setSelectionMode = this.canvas.current.setSelectionMode;
-        const playerRef = this.canvas.current.playerRef.current;
+        const playerRef = this.canvas.current.videoPlayer.current;
         const playerSate = playerRef.getState().player;
         switch (toolbarItem.props.name) {
             case "drawRectangle":
